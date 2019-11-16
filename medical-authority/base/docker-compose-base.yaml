@@ -1,0 +1,110 @@
+# Copyright IBM Corp. All Rights Reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+version: '2'
+
+services:
+
+  ministryofhealth.sharad.com:
+    container_name: ministryofhealth.sharad.com
+    extends:
+      file: peer-base.yaml
+      service: orderer-base
+    volumes:
+        - ../channel-artifacts/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
+        - ../crypto-config/ordererOrganizations/sharad.com/orderers/ministryofhealth.sharad.com/msp:/var/hyperledger/orderer/msp
+        - ../crypto-config/ordererOrganizations/sharad.com/orderers/ministryofhealth.sharad.com/tls/:/var/hyperledger/orderer/tls
+        - ministryofhealth.sharad.com:/var/hyperledger/production/orderer
+    ports:
+      - 7050:7050
+
+  aiimsindia.hospital.sharad.com:
+    container_name: aiimsindia.hospital.sharad.com
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=aiimsindia.hospital.sharad.com
+      - CORE_PEER_ADDRESS=aiimsindia.hospital.sharad.com:7051
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:7051
+      - CORE_PEER_CHAINCODEADDRESS=aiimsindia.hospital.sharad.com:7052
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:7052
+      - CORE_PEER_GOSSIP_BOOTSTRAP=uhgusa.hospital.sharad.com:8051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=aiimsindia.hospital.sharad.com:7051
+      - CORE_PEER_LOCALMSPID=HospitalMSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/hospital.sharad.com/peers/aiimsindia.hospital.sharad.com/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/hospital.sharad.com/peers/aiimsindia.hospital.sharad.com/tls:/etc/hyperledger/fabric/tls
+        - aiimsindia.hospital.sharad.com:/var/hyperledger/production
+    ports:
+      - 7051:7051
+
+  uhgusa.hospital.sharad.com:
+    container_name: uhgusa.hospital.sharad.com
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=uhgusa.hospital.sharad.com
+      - CORE_PEER_ADDRESS=uhgusa.hospital.sharad.com:8051
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:8051
+      - CORE_PEER_CHAINCODEADDRESS=uhgusa.hospital.sharad.com:8052
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:8052
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=uhgusa.hospital.sharad.com:8051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=aiimsindia.hospital.sharad.com:7051
+      - CORE_PEER_LOCALMSPID=HospitalMSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/hospital.sharad.com/peers/uhgusa.hospital.sharad.com/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/hospital.sharad.com/peers/uhgusa.hospital.sharad.com/tls:/etc/hyperledger/fabric/tls
+        - uhgusa.hospital.sharad.com:/var/hyperledger/production
+
+    ports:
+      - 8051:8051
+
+  sbi.insurancecompany.sharad.com:
+    container_name: sbi.insurancecompany.sharad.com
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=sbi.insurancecompany.sharad.com
+      - CORE_PEER_ADDRESS=sbi.insurancecompany.sharad.com:9051
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:9051
+      - CORE_PEER_CHAINCODEADDRESS=sbi.insurancecompany.sharad.com:9052
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:9052
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=sbi.insurancecompany.sharad.com:9051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=uhg.insurancecompany.sharad.com:10051
+      - CORE_PEER_LOCALMSPID=InsurancecompanyMSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/insurancecompany.sharad.com/peers/sbi.insurancecompany.sharad.com/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/insurancecompany.sharad.com/peers/sbi.insurancecompany.sharad.com/tls:/etc/hyperledger/fabric/tls
+        - sbi.insurancecompany.sharad.com:/var/hyperledger/production
+    ports:
+      - 9051:9051
+
+  uhg.insurancecompany.sharad.com:
+    container_name: uhg.insurancecompany.sharad.com
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=uhg.insurancecompany.sharad.com
+      - CORE_PEER_ADDRESS=uhg.insurancecompany.sharad.com:10051
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:10051
+      - CORE_PEER_CHAINCODEADDRESS=uhg.insurancecompany.sharad.com:10052
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:10052
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=uhg.insurancecompany.sharad.com:10051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=sbi.insurancecompany.sharad.com:9051
+      - CORE_PEER_LOCALMSPID=InsurancecompanyMSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/insurancecompany.sharad.com/peers/uhg.insurancecompany.sharad.com/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/insurancecompany.sharad.com/peers/uhg.insurancecompany.sharad.com/tls:/etc/hyperledger/fabric/tls
+        - uhg.insurancecompany.sharad.com:/var/hyperledger/production
+    ports:
+      - 10051:10051
